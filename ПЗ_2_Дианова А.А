@@ -1,0 +1,32 @@
+--Создаем файл my.cnf
+[client]
+user=root
+password=***********
+
+-- Создаем базу данных "example"
+CREATE DATABASE `example`;
+
+--Создаем таблицу "users"
+CREATE TABLE `users` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL COMMENT 'Имя пользователя',
+PRIMARY KEY (`id`),
+UNIQUE KEY `id` (`id`)
+
+--Созадаем базу данных "sample"
+CREATE DATABASE `sample`;
+
+--Создаем дамп базы данных example из предыдущего задания, переносим содержимое дампа в новую базу данных sample.
+
+C:\Users\sante>mysqldump -u root -p example >example.sql
+Enter password: ***********
+C:\Users\sante>mysql -u root -p sample < example.sql
+Enter password: ***********
+
+--Создайем дамп единственной таблицы help_keyword базы данных mysql. В БД "Dianova"
+ CREATE DATABASE `Dianova`;
+ use Dianova;
+ CREATE TABLE Dianova.help_keyword
+    SELECT *
+    FROM mysql.help_keyword
+    LIMIT 100;
