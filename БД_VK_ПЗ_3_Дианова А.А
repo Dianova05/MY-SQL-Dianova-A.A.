@@ -1,0 +1,162 @@
+drop database if exists vk;
+create database vk;
+use vk;
+
+
+drop table if exists users;
+create table users(
+	id BIGINT unsigned not null auto_increment primary key,
+	firstname varchar(50),
+	lastname varchar(50) comment 'Фамилия',
+	email varchar(120) unique,
+	password_hash varchar(100),
+	pfone BIGINT unsigned unique,
+	
+	index users_firstname_lastname_id (firstname, lastname)
+);
+
+drop table if exists profiles;
+
+create table profiles(
+	user_id BIGINT unsigned not null unique,
+	gender char(1),
+	birthday date,
+	photo_id BIGINT unsigned not null,
+	created_at datetime default now(),
+	hometown varchar(100)
+);
+
+
+
+alter table profiles
+add constraint fk_users_id foreign key (user_id) references users(id)
+on update cascade
+on delete  restrict;
+
+drop table if exists messages;
+
+create table messages(
+	id serial,  -- serial = BIGINT unsigned not null unique
+	from_user_id BIGINT unsigned not null,
+	to_user_id BIGINT unsigned not null,
+	body text,
+	created_at datetime default now(),
+	
+	foreign key(from_user_id) references users(id),
+	foreign key(to_user_id) references users(id)
+	);
+
+create table friend_requests (
+	initiator_user_id BIGINT unsigned not null,
+	target_user_id BIGINT unsigned not null,
+	`status` enum('requested', 'approved', 'declined', 'unfriended'),
+	requested_at datetime default now(),
+	updated_at datetime on update current_timestamp,
+	
+	primary key (initiator_user_id, target_user_id),
+	foreign key(initiator_user_id) references users(id),
+	foreign key(target_user_id) references users(id)
+	);
+
+
+alter table friend_requests
+add check (initiator_user_id <> target_user_id);
+
+create table communities (
+	id serial,
+	name varchar(100),
+	admin_user_id BIGINT unsigned not null,
+	
+	index communities_name_idx (name),
+	foreign key (admin_user_id) references users(id)
+);
+
+
+create table users_communities (
+	user_id BIGINT unsigned not null,
+	community_id BIGINT unsigned not null,
+	
+	primary key (user_id, community_id),
+	foreign key(user_id) references users(id),
+	foreign key(community_id) references communities(id)
+	);
+	
+
+create table media_types(
+	id serial,
+	name varchar(50),
+	created_at datetime default now(),
+	updated_at datetime on update current_timestamp
+);
+
+create table media(
+	id serial,
+	media_type_id BIGINT unsigned not null,
+	user_id BIGINT unsigned not null,
+	body text,
+	filename varchar(255),
+	size int,
+	metadate JSON,
+	created_at datetime default now(),
+	updated_at datetime on update current_timestamp,
+	
+	foreign key(user_id) references users(id),
+	foreign key(media_type_id) references media_types(id)
+);
+
+drop table if exists likes;
+create table likes(
+	id serial,
+	user_id BIGINT unsigned not null,
+	media_id BIGINT unsigned not null,
+	created_at datetime default now(),
+	
+	foreign key(user_id) references users(id),
+	foreign key(media_id) references media(id)
+);
+
+
+create table photo_albums(
+	id serial,
+	user_id BIGINT unsigned not null,
+	name varchar(100),
+	
+	foreign key(user_id) references users(id)
+);
+
+
+create table photos(
+	id serial,
+	album_id BIGINT unsigned not null,
+	media_id BIGINT unsigned not null,
+	
+	foreign key(album_id) references photo_albums(id),
+	foreign key(media_id) references media(id)
+);
+
+create table music_albums(
+	id serial,
+	user_id BIGINT unsigned not null,
+	name varchar(100),
+	
+	foreign key(user_id) references users(id)
+);
+
+create table music(
+	id serial,
+	album_id BIGINT unsigned not null,
+	media_id BIGINT unsigned not null,
+	
+	foreign key(album_id) references music_albums(id),
+	foreign key(media_id) references media(id)
+);
+	
+create table media_comments(
+	id serial,
+	media_id BIGINT unsigned not null,
+	user_id BIGINT unsigned not null,
+	comment text,
+	
+	foreign key(media_id) references media(id),
+	foreign key(user_id) references users(id)
+);
