@@ -1,32 +1,41 @@
---Ð¡Ð¾Ð·Ð´Ð°ÐµÐ¼ Ñ„Ð°Ð¹Ð» my.cnf
+-- Ñîçàäþ ôàéë my.cnf
 [client]
 user=root
 password=***********
 
--- Ð¡Ð¾Ð·Ð´Ð°ÐµÐ¼ Ð±Ð°Ð·Ñƒ Ð´Ð°Ð½Ð½Ñ‹Ñ… "example"
+-- Ñîçäàþ áàçó äàííûõ "example"
 CREATE DATABASE `example`;
 
---Ð¡Ð¾Ð·Ð´Ð°ÐµÐ¼ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñƒ "users"
+-- Ðàçìåùàþ â áàçå äàííûõ  "example" òàáëèöó "users"
+drop table `users`;
 CREATE TABLE `users` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL COMMENT 'Ð˜Ð¼Ñ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ',
+  `name` varchar(255) DEFAULT NULL COMMENT 'Èìÿ ïîëüçîâàòåëÿ',
 PRIMARY KEY (`id`),
 UNIQUE KEY `id` (`id`)
 
---Ð¡Ð¾Ð·Ð°Ð´Ð°ÐµÐ¼ Ð±Ð°Ð·Ñƒ Ð´Ð°Ð½Ð½Ñ‹Ñ… "sample"
+-- Ñîçäàþ áàçó äàííûõ "sample"
 CREATE DATABASE `sample`;
 
---Ð¡Ð¾Ð·Ð´Ð°ÐµÐ¼ Ð´Ð°Ð¼Ð¿ Ð±Ð°Ð·Ñ‹ Ð´Ð°Ð½Ð½Ñ‹Ñ… example Ð¸Ð· Ð¿Ñ€ÐµÐ´Ñ‹Ð´ÑƒÑ‰ÐµÐ³Ð¾ Ð·Ð°Ð´Ð°Ð½Ð¸Ñ, Ð¿ÐµÑ€ÐµÐ½Ð¾ÑÐ¸Ð¼ ÑÐ¾Ð´ÐµÑ€Ð¶Ð¸Ð¼Ð¾Ðµ Ð´Ð°Ð¼Ð¿Ð° Ð² Ð½Ð¾Ð²ÑƒÑŽ Ð±Ð°Ð·Ñƒ Ð´Ð°Ð½Ð½Ñ‹Ñ… sample.
+-- Ñîçäàþ äàìï áàçû äàííûõ example, 
+-- ðàçâîðà÷èâàþ ñîäåðæèìîå äàìïà â íîâóþ áàçó äàííûõ sample
 
 C:\Users\sante>mysqldump -u root -p example >example.sql
 Enter password: ***********
 C:\Users\sante>mysql -u root -p sample < example.sql
 Enter password: ***********
 
---Ð¡Ð¾Ð·Ð´Ð°Ð¹ÐµÐ¼ Ð´Ð°Ð¼Ð¿ ÐµÐ´Ð¸Ð½ÑÑ‚Ð²ÐµÐ½Ð½Ð¾Ð¹ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñ‹ help_keyword Ð±Ð°Ð·Ñ‹ Ð´Ð°Ð½Ð½Ñ‹Ñ… mysql. Ð’ Ð‘Ð” "Dianova"
- CREATE DATABASE `Dianova`;
+-- äàìï åäèíñòâåííîé òàáëèöû help_keyword áàçû äàííûõ mysql
+-- â áàçó äàííûõ `Dianova` âûïîëíÿþ 2 ñïîñîáàìè 
+-- 1. Ñîçäàþ áàçó äàííûõ `Dianova`: 
+CREATE DATABASE `Dianova`;
  use Dianova;
+
+-- ñîçäàþ äàìï òàáëèöû help_keyword 
  CREATE TABLE Dianova.help_keyword
     SELECT *
     FROM mysql.help_keyword
     LIMIT 100;
+    
+   -- 2. 
+   C:\Users\sante>mysqldump mysql --where="true limit 100" help_keyword > dianova.sql
